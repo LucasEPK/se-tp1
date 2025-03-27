@@ -1,7 +1,10 @@
-from flask import Flask
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import serial
 
 app = Flask(__name__)
+
+CORS(app, resources={r"/*":{"origins": "*"}}, supports_credentials=True)
 
 ser = serial.Serial(port='/dev/ttyACM0',
                     baudrate=9600,
@@ -36,3 +39,10 @@ def get_led_luminosity(number):
 @app.post("/led/<number>")
 def post_led_luminosity(number):
     led9luminosity = number
+
+@app.post("/switchLed/<number>")
+def switch_led(number):
+    data = request.get_json()
+    isOn = data.get('on', False)
+    print(isOn)
+    return jsonify({'led': number, 'on': isOn})
