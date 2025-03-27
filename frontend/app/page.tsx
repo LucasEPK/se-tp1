@@ -27,7 +27,7 @@ export default function Home() {
 
   async function switchLed(event: ChangeEvent, checked: boolean) {
     setLed13On(checked);
-    console.log(checked);
+    // Sends a POST request to the backend with the new value of the switch
     const response = await fetch('http://localhost:8080/switchLed/13', {
       method: 'POST',
       headers: {

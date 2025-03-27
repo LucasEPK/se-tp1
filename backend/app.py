@@ -40,9 +40,14 @@ def get_led_luminosity(number):
 def post_led_luminosity(number):
     led9luminosity = number
 
+# Switches on and off arduino leds (it works only on led 13 for now)
 @app.post("/switchLed/<number>")
 def switch_led(number):
     data = request.get_json()
     isOn = data.get('on', False)
-    print(isOn)
+
+    # Sends the command to the Arduino
+    cadena = "switch led " + number + ":" + str(isOn)
+    ser.write(cadena.encode('utf-8'))
+
     return jsonify({'led': number, 'on': isOn})
