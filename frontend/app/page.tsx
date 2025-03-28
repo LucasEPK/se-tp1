@@ -13,16 +13,43 @@ export default function Home() {
   const [valueLed11, setValueLed11] = useState<number>(0);
   const [led13On, setLed13On] = useState<boolean>(false);
 
-  const handleChange9 = (event: Event, newValue: number | number[]) => {
+  async function handleChange9(event: Event, newValue: number | number[]) {
     setValueLed9(newValue as number);
+    const response = await fetch('http://localhost:8080/ledLuminosity/9', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({luminosity: newValue}),
+    });
+    const data = await response.json();
+    console.log(data);
   };
 
-  const handleChange10 = (event: Event, newValue: number | number[]) => {
+  async function handleChange10(event: Event, newValue: number | number[]){
     setValueLed10(newValue as number);
+    const response = await fetch('http://localhost:8080/ledLuminosity/10', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({luminosity: newValue}),
+    });
+    const data = await response.json();
+    console.log(data);
   };
 
-  const handleChange11 = (event: Event, newValue: number | number[]) => {
+  async function handleChange11(event: Event, newValue: number | number[]){
     setValueLed11(newValue as number);
+    const response = await fetch('http://localhost:8080/ledLuminosity/11', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({luminosity: newValue}),
+    });
+    const data = await response.json();
+    console.log(data);
   };
 
   async function switchLed(event: ChangeEvent, checked: boolean) {
@@ -45,7 +72,7 @@ export default function Home() {
         <div className={styles.innerContainer}>
           <h1>Arduino settings</h1>
           <p>Led 9 intensity</p>
-          <Slider aria-label="Led 9 intensity" value={valueLed9} onChange={handleChange9}/>
+          <Slider step={10} marks aria-label="Led 9 intensity" value={valueLed9} onChange={handleChange9}/>
           <p>Led 10 intensity</p>
           <Slider aria-label="Led 10 intensity" value={valueLed10} onChange={handleChange10}/>
           <p>Led 11 intensity</p>

@@ -1,3 +1,4 @@
+from math import floor
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import serial
@@ -32,13 +33,21 @@ def send_9():
     ser.write(cadena.encode('utf-8'))
     return "<p>9 sent</p>"
 
-@app.get("/led/<number>")
+@app.get("/ledLuminosity/<number>")
 def get_led_luminosity(number):
     return f"LED {number} luminosity"
 
-@app.post("/led/<number>")
+@app.post("/ledLuminosity/<number>")
 def post_led_luminosity(number):
-    led9luminosity = number
+    data = request.get_json()
+    luminosity = data.get('luminosity', 0)
+
+    analogLuminosity = floor((luminosity/100) * 255)
+
+    cadena = "led " + number + " set luminosity to: " + str(analogLuminosity)
+    ser.write(cadena.encode('utf-8'))
+
+    return jsonify({'led': number, 'luminosity': analogLuminosity})
 
 # Switches on and off arduino leds (it works only on led 13 for now)
 @app.post("/switchLed/<number>")
