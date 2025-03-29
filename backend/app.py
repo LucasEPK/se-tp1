@@ -31,6 +31,7 @@ def handle_connect():
 @socketio.on("get_data")
 def send_data():
     socketio.emit("update_data", {"value": i})
+    print("Sending data to client")
     i += 1
 
 @app.route("/")

@@ -20,6 +20,7 @@ export default function Home() {
   useEffect(() => {
     socket.on('update_data', (data) => {
       setData(data);
+      console.log("got data: ", data);
     });
 
     return () => {
