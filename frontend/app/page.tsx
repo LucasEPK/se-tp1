@@ -24,9 +24,7 @@ export default function Home() {
       console.log("got data: ", data1);
     });
 
-    return () => {
-      socket.disconnect();
-    };
+    
   }, [socket, data]);
 
   async function handleChange9(event: Event, newValue: number | number[]) {
