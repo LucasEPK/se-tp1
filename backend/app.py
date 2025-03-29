@@ -70,4 +70,4 @@ def switch_led(number):
     return jsonify({'led': number, 'on': isOn})
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, port=8080)
