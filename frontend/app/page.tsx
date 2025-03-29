@@ -18,15 +18,15 @@ export default function Home() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    socket.on('update_data', (data) => {
-      setData(data);
-      console.log("got data: ", data);
+    socket.on('update_data', (data1) => {
+      setData(data1);
+      console.log("got data: ", data1);
     });
 
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [socket, data]);
 
   async function handleChange9(event: Event, newValue: number | number[]) {
     setValueLed9(newValue as number);
