@@ -18,7 +18,7 @@ export default function Home() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    socket.emit('get_data', {});
+    socket.emit('get_data');
     socket.on('update_data', (data1) => {
       setData(data1);
       console.log("got data: ", data1);
