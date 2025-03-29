@@ -22,7 +22,7 @@ ser = serial.Serial(port='/dev/ttyACM0',
                     exclusive=None)
 
 led9luminosity = 0
-i= 0
+
 
 @socketio.on('connect')
 def handle_connect():
@@ -30,9 +30,11 @@ def handle_connect():
 
 @socketio.on("get_data")
 def send_data():
-    socketio.emit("update_data", {"value": i})
+    i= 0
+    while i < 5:
+        socketio.emit("update_data", {"value": i})
+        i += 1
     print("Sending data to client")
-    i += 1
 
 @app.route("/")
 def hello_world():
