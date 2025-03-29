@@ -18,6 +18,7 @@ export default function Home() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
+    socket.emit('get_data', {});
     socket.on('update_data', (data1) => {
       setData(data1);
       console.log("got data: ", data1);
@@ -26,7 +27,7 @@ export default function Home() {
     return () => {
       socket.disconnect();
     };
-  }, [socket, data]);
+  }, []);
 
   async function handleChange9(event: Event, newValue: number | number[]) {
     setValueLed9(newValue as number);
