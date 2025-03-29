@@ -2,8 +2,10 @@ from math import floor
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import serial
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 CORS(app, resources={r"/*":{"origins": "*"}}, supports_credentials=True)
 
@@ -20,6 +22,16 @@ ser = serial.Serial(port='/dev/ttyACM0',
                     exclusive=None)
 
 led9luminosity = 0
+i= 0
+
+@socketio.on('connect')
+def handle_connect():
+    print("Client connected")
+
+@socketio.on("get_data")
+def send_data():
+    socketio.emit("update_data", {"value": i})
+    i += 1
 
 @app.route("/")
 def hello_world():
@@ -27,11 +39,6 @@ def hello_world():
     cadena = ser.readline().decode('utf-8')
     return "<p>Hello,"+cadena+" World!</p>"
 
-@app.route("/send9")
-def send_9():
-    cadena = "9"
-    ser.write(cadena.encode('utf-8'))
-    return "<p>9 sent</p>"
 
 @app.get("/ledLuminosity/<number>")
 def get_led_luminosity(number):

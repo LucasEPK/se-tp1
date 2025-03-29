@@ -4,14 +4,28 @@ import styles from "./page.module.css";
 import Slider from '@mui/material/Slider';
 import { ChangeEvent, useState } from "react";
 import Paper from '@mui/material/Paper';
-import { Box, FormControlLabel, Switch } from "@mui/material";
+import { Switch } from "@mui/material";
+import io from "socket.io-client";
+import { useEffect } from "react";
 
+const socket = io('http://localhost:8080');
 
 export default function Home() {
   const [valueLed9, setValueLed9] = useState<number>(0);
   const [valueLed10, setValueLed10] = useState<number>(0);
   const [valueLed11, setValueLed11] = useState<number>(0);
   const [led13On, setLed13On] = useState<boolean>(false);
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    socket.on('update_data', (data) => {
+      setData(data);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   async function handleChange9(event: Event, newValue: number | number[]) {
     setValueLed9(newValue as number);
@@ -79,7 +93,7 @@ export default function Home() {
           <Slider aria-label="Led 11 intensity" value={valueLed11} onChange={handleChange11}/>
           <p>Led 13 switch</p>
           <Switch onChange={switchLed}/>
-          <p>LDR intensity: 0</p>
+          <p>LDR intensity: {data ? JSON.stringify(data) : "waiting..."}</p>
         </div>
         
       </Paper>
