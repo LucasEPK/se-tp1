@@ -27,7 +27,7 @@ export default function Home() {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [socket, data]);
 
   async function handleChange9(event: Event, newValue: number | number[]) {
     setValueLed9(newValue as number);
