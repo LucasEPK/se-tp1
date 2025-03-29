@@ -68,3 +68,6 @@ def switch_led(number):
     ser.write(cadena.encode('utf-8'))
 
     return jsonify({'led': number, 'on': isOn})
+
+if __name__ == "__main__":
+    socketio.run(app, debug=True)
