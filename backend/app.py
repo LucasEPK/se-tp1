@@ -30,10 +30,8 @@ def handle_connect():
 
 @socketio.on("get_data")
 def send_data():
-    i= 0
-    while i < 5:
-        socketio.emit("update_data", {"value": i})
-        i += 1
+    socketio.emit("update_data", {"value": ser.readline().decode('utf-8')})
+    
     print("Sending data to client")
 
 @app.route("/")
