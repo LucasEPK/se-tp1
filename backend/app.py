@@ -23,8 +23,7 @@ ser = serial.Serial(port='/dev/ttyACM0',
                     inter_byte_timeout=None,
                     exclusive=None)
 
-led9luminosity = 0
-
+# Reads arduino serial port output, and sends it to frontend if string matches case
 def read_serial():
     while True:
         if ser.in_waiting > 0:
@@ -35,7 +34,7 @@ def read_serial():
                     if line.startswith("LDR lux:"):
                         # Extract the luminosity value from the line
                         luminosity = line.split(":")[1].strip()
-                        socketio.emit("update_data", {"value": luminosity})
+                        socketio.emit("update_ldr_luminosity", {"value": luminosity})
                         print(f"Sending luminosity data: {luminosity}")
             except Exception as e:
                 print(f"Error reading serial data: {e}")
@@ -47,16 +46,8 @@ threading.Thread(target=read_serial, daemon=True).start()
 def handle_connect():
     print("Client connected")
 
-@socketio.on("get_data")
-def send_data():
-    socketio.emit("update_data", {"value": ser.readline().decode('utf-8')})
-    
-    print("Sending data to client")
-
 @app.route("/")
 def hello_world():
-    #ser.flushInput()
-    cadena = ser.readline().decode('utf-8')
     return "<p>Hello,"+cadena+" World!</p>"
 
 
@@ -64,6 +55,7 @@ def hello_world():
 def get_led_luminosity(number):
     return f"LED {number} luminosity"
 
+# Changes led number luminosity
 @app.post("/ledLuminosity/<number>")
 def post_led_luminosity(number):
     data = request.get_json()

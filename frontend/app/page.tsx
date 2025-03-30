@@ -15,16 +15,16 @@ export default function Home() {
   const [valueLed10, setValueLed10] = useState<number>(0);
   const [valueLed11, setValueLed11] = useState<number>(0);
   const [led13On, setLed13On] = useState<boolean>(false);
-  const [data, setData] = useState<any>(null);
+  const [LDRluminosity, setLDRluminosity] = useState<any>(null);
 
   useEffect(() => {
-    socket.on('update_data', (data1) => {
-      setData(data1);
-      console.log("got data: ", data1);
+    socket.on('update_ldr_luminosity', (data) => {
+      setLDRluminosity(data);
+      console.log("got LDRluminosity: ", data);
     });
 
     
-  }, [socket, data]);
+  }, [socket, LDRluminosity]);
 
   async function handleChange9(event: Event, newValue: number | number[]) {
     setValueLed9(newValue as number);
@@ -92,7 +92,7 @@ export default function Home() {
           <Slider aria-label="Led 11 intensity" value={valueLed11} onChange={handleChange11}/>
           <p>Led 13 switch</p>
           <Switch onChange={switchLed}/>
-          <p>LDR intensity: {data ? data.value : "waiting..."}</p>
+          <p>LDR intensity: {LDRluminosity ? LDRluminosity.value : "waiting..."}</p>
         </div>
         
       </Paper>
