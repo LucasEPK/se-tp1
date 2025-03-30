@@ -18,7 +18,6 @@ export default function Home() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    socket.emit('get_data');
     socket.on('update_data', (data1) => {
       setData(data1);
       console.log("got data: ", data1);
@@ -93,7 +92,7 @@ export default function Home() {
           <Slider aria-label="Led 11 intensity" value={valueLed11} onChange={handleChange11}/>
           <p>Led 13 switch</p>
           <Switch onChange={switchLed}/>
-          <p>LDR intensity: {data ? JSON.stringify(data) : "waiting..."}</p>
+          <p>LDR intensity: {data ? data.value : "waiting..."}</p>
         </div>
         
       </Paper>

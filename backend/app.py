@@ -3,6 +3,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import serial
 from flask_socketio import SocketIO
+import threading
+import time
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -23,6 +25,23 @@ ser = serial.Serial(port='/dev/ttyACM0',
 
 led9luminosity = 0
 
+def read_serial():
+    while True:
+        if ser.in_waiting > 0:
+            try:
+                line = ser.readline().decode('utf-8').rstrip()
+                print(line)
+                if line:
+                    if line.startswith("LDR lux:"):
+                        # Extract the luminosity value from the line
+                        luminosity = line.split(":")[1].strip()
+                        socketio.emit("update_data", {"value": luminosity})
+                        print(f"Sending luminosity data: {luminosity}")
+            except Exception as e:
+                print(f"Error reading serial data: {e}")
+        time.sleep(0.05)
+
+threading.Thread(target=read_serial, daemon=True).start()
 
 @socketio.on('connect')
 def handle_connect():
