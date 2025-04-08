@@ -10,8 +10,8 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 CORS(app, resources={r"/*":{"origins": "*"}}, supports_credentials=True)
-
-ser = serial.Serial(port='/dev/ttyACM0',
+#TODO: make port an env variable
+ser = serial.Serial(port='/dev/ttyACM1',
                     baudrate=9600,
                     bytesize=serial.EIGHTBITS,
                     parity=serial.PARITY_NONE,
@@ -29,16 +29,22 @@ def read_serial():
         if ser.in_waiting > 0:
             try:
                 line = ser.readline().decode('utf-8').rstrip()
-                print(line)
+                #print(line)
                 if line:
                     if line.startswith("LDR lux:"):
                         # Extract the luminosity value from the line
                         luminosity = line.split(":")[1].strip()
                         socketio.emit("update_ldr_luminosity", {"value": luminosity})
-                        print(f"Sending luminosity data: {luminosity}")
+                    elif line.startswith("led "):
+                        #"led "+ numberBuffer + " intensity: " + intensityBuffer
+                        ledNumber = int(line[4:6])
+                        intensity = int(line[18:21])
+                        socketio.emit("update_led_luminosity", {"led": ledNumber, "luminosity": intensity})
+                    #else:
+                    #    print("not a case: ", line)
             except Exception as e:
                 print(f"Error reading serial data: {e}")
-        time.sleep(0.05)
+        time.sleep(0.4)
 
 threading.Thread(target=read_serial, daemon=True).start()
 
@@ -80,5 +86,6 @@ def switch_led(number):
 
     return jsonify({'led': number, 'on': isOn})
 
+#TODO: make host and port env variables
 if __name__ == "__main__":
-    socketio.run(app, debug=True, port=8080)
+    socketio.run(app, debug=True, port=8080, host="10.65.4.217")
