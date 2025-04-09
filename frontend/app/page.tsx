@@ -28,20 +28,13 @@ export default function Home() {
   const [LDRluminosity, setLDRluminosity] = useState<any>(null);
 
   useEffect(() => {
-    socket.on('update_ldr_luminosity', (data) => {
-      setLDRluminosity(data);
-      console.log("got LDRluminosity: ", data);
-    });
-    
-    socket.on('update_led_luminosity', (data1) => {
-      if (data1.led === 9) {
-        setLed9Luminosity(data1.luminosity);
-      } else if (data1.led === 10) {
-        setLed10Luminosity(data1.luminosity);
-      } else if (data1.led === 11) {
-        setLed11Luminosity(data1.luminosity);
-      }
-      console.log("got led", data1.led, " luminosity: ", data1.luminosity);
+
+    socket.on('update_arduino_data', (data2) => {
+      setLed9Luminosity(data2.led9_intensity);
+      setLed10Luminosity(data2.led10_intensity);
+      setLed11Luminosity(data2.led11_intensity);
+      setLDRluminosity(data2.ldr_luminosity);
+      console.log("got arduino data: ", data2);
     });
     
   }, [socket, LDRluminosity, led9Luminosity, led10Luminosity, led11Luminosity]);
@@ -112,7 +105,7 @@ export default function Home() {
           <Slider aria-label="Led 11 intensity" value={valueLed11} onChange={handleChange11}/>
           <p>Led 13 switch</p>
           <Switch onChange={switchLed}/>
-          <p>LDR intensity: {LDRluminosity ? LDRluminosity.value : "waiting..."}</p>
+          <p>LDR intensity: {LDRluminosity ? LDRluminosity : "waiting..."}</p>
         </div>
         
       </Paper>

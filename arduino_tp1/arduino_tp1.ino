@@ -3,6 +3,10 @@ int echo=4;
 
 String receivedInput;
 
+int intensityLed9;
+int intensityLed10;
+int intensityLed11;
+
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(A3, INPUT);
@@ -13,19 +17,33 @@ void loop() {
   //makeLedBlink(13);
   receivedInput = receiveInput();
   handleInput(receivedInput);
-  readLdrAnalogOutput();
+  printLdrAnalogOutput();
+  printLedsAnalogOutput();
+  Serial.println();
+  delay(1000); //one second
 }
 
 void changeLedIntensity(int number, int intensity) {
   pinMode(number, OUTPUT);
   analogWrite(number, intensity);
 
-  char numberBuffer[3];
-  char intensityBuffer[4];
-  sprintf(numberBuffer, "%02d", number);
-  sprintf(intensityBuffer, "%03d", intensity);
+  switch (number) {
+    case 9:
+      intensityLed9 = intensity;
+      break;
+    case 10:
+      intensityLed10 = intensity;
+      break;
+    case 11:
+      intensityLed11 = intensity;
+      break;
+  }
+  //char numberBuffer[3];
+  //char intensityBuffer[4];
+  //sprintf(numberBuffer, "%02d", number);
+  //sprintf(intensityBuffer, "%03d", intensity);
 
-  Serial.println("led "+ String(numberBuffer) + " intensity: " + String(intensityBuffer));
+  //Serial.println("led "+ String(numberBuffer) + " intensity: " + String(intensityBuffer));
 }
 
 void makeLedBlink(int number) {
@@ -36,9 +54,21 @@ void makeLedBlink(int number) {
   delay(500);
 }
 
-void readLdrAnalogOutput() {
-  Serial.println("LDR lux:" + String(analogRead(A3)));
-  delay(500);
+void printLdrAnalogOutput() {
+  char ldrLuxBuffer[5];
+  sprintf(ldrLuxBuffer, "%04d", analogRead(A3));
+  Serial.print("LDR lux: " + String(ldrLuxBuffer));
+}
+
+void printLedsAnalogOutput() {
+  char intensityBufferLed9[4];
+  char intensityBufferLed10[4];
+  char intensityBufferLed11[4];
+  sprintf(intensityBufferLed9, "%03d", intensityLed9);
+  sprintf(intensityBufferLed10, "%03d", intensityLed10);
+  sprintf(intensityBufferLed11, "%03d", intensityLed11);
+
+  Serial.print(", led 9 intensity: "+ String(intensityBufferLed9) + ", led 10 intensity: "+ String(intensityBufferLed10) + ", led 11 intensity: " + String(intensityBufferLed11));
 }
 
 String receiveInput() {

@@ -11,7 +11,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 CORS(app, resources={r"/*":{"origins": "*"}}, supports_credentials=True)
 #TODO: make port an env variable
-ser = serial.Serial(port='/dev/ttyACM1',
+ser = serial.Serial(port='/dev/ttyACM0',
                     baudrate=9600,
                     bytesize=serial.EIGHTBITS,
                     parity=serial.PARITY_NONE,
@@ -26,25 +26,28 @@ ser = serial.Serial(port='/dev/ttyACM1',
 # Reads arduino serial port output, and sends it to frontend if string matches case
 def read_serial():
     while True:
+        #LDR lux: 0830, led 9 intensity: 000, led 10 intensity: 000, led 11 intensity: 000
         if ser.in_waiting > 0:
             try:
                 line = ser.readline().decode('utf-8').rstrip()
-                #print(line)
+                
                 if line:
                     if line.startswith("LDR lux:"):
                         # Extract the luminosity value from the line
-                        luminosity = line.split(":")[1].strip()
-                        socketio.emit("update_ldr_luminosity", {"value": luminosity})
-                    elif line.startswith("led "):
-                        #"led "+ numberBuffer + " intensity: " + intensityBuffer
-                        ledNumber = int(line[4:6])
-                        intensity = int(line[18:21])
-                        socketio.emit("update_led_luminosity", {"led": ledNumber, "luminosity": intensity})
+                        ldrLuminosity = int(line[9:13])
+                        
+                        led9Intensity = int(line[32:35])
+                        led10Intensity = int(line[55:58])
+                        led11Intensity = int(line[78:81])
+                        socketio.emit("update_arduino_data", {"ldr_luminosity": ldrLuminosity,
+                                                                "led9_intensity": led9Intensity,
+                                                                "led10_intensity": led10Intensity,
+                                                                "led11_intensity": led11Intensity})
                     #else:
                     #    print("not a case: ", line)
             except Exception as e:
                 print(f"Error reading serial data: {e}")
-        time.sleep(0.4)
+        time.sleep(1.0)
 
 threading.Thread(target=read_serial, daemon=True).start()
 
@@ -88,4 +91,4 @@ def switch_led(number):
 
 #TODO: make host and port env variables
 if __name__ == "__main__":
-    socketio.run(app, debug=True, port=8080, host="10.65.4.217")
+    socketio.run(app, debug=True, port=8080, host="192.168.100.99")
