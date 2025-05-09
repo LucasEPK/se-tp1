@@ -7,6 +7,7 @@ import { useState } from "react";
 
 export default function Home() {
   const [alarmOn, setAlarmOn] = useState<boolean>(true);
+  const [luminosity, setLuminosity] = useState<number>(0);
 
   const switchLed = () => {
     console.log("Switch toggled");
@@ -18,7 +19,7 @@ export default function Home() {
         <div className={styles.innerContainer}>
 
           <h1>TP2: freeRTOS</h1>
-          <p>Luminosity: 0</p>
+          <p>Luminosity: {luminosity}</p>
           <p>Analog Read:</p>
           <Switch defaultChecked onChange={switchLed}/>
           {alarmOn ? <Alert severity="warning">LUMINOSITY REACHED 800+ VALUE</Alert> : <p>Lucas Moyano</p>}
