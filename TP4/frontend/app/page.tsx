@@ -21,21 +21,38 @@ export default function Home() {
   );
   const [response, setResponse] = useState(<> </>);
 
+  useEffect(() => {
+      socket.on("update_luminosity_per_minute", (data) => {
+        setLuxPerMinute(data.luminosity);
+        console.log("read luminosity: " + String(data.luminosity));
+
+        setResponse(
+          data.luminosity >= luxThreshold ? (
+            <Alert severity="success">La planta tiene la suficiente luminosidad</Alert>
+          ) : (
+            <Alert severity="warning">La planta no tiene la suficiente luminosidad</Alert>
+          )
+        );
+        setFirstButton(
+          <Button onClick={getLuxPerMinute} variant="outlined">Obtener luminosidad por minuto</Button>
+        );
+      });
+  }, [socket, luxPerMinute]);
+
   function getLuxPerMinute() {
     console.log("Obteniendo luminosidad por minuto");
-    setLuxPerMinute(20000); // Simulated value, replace with actual logic
     setFirstButton(
       <Button fullWidth loading loadingPosition="start" startIcon={<SaveIcon/>} variant="outlined">
         Obteniendo luminosidad, espere un minuto...
       </Button>
     );
-    setResponse(
-      luxPerMinute >= luxThreshold ? (
-        <Alert severity="success">La planta tiene la suficiente luminosidad</Alert>
-      ) : (
-        <Alert severity="warning">La planta no tiene la suficiente luminosidad</Alert>
-      )
-    );
+    fetch(backendUrl + "/api/get_luminosity_per_minute", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+    });
   }
 
   return (
@@ -45,6 +62,8 @@ export default function Home() {
         <div className={styles.innerContainer}>
 
           <h1>TP integrador: luminosidad para plantas de vid</h1>
+          <p>Limite de lux: {luxThreshold}</p>
+          <p>Luminosidad por minuto: {luxPerMinute}</p>
           {firstButton}
           {response}
         </div>
