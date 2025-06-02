@@ -4,6 +4,10 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
+  background-image: url(../public/background.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: -1;
 }
 
 .paper {

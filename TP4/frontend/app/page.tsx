@@ -62,8 +62,8 @@ export default function Home() {
         <div className={styles.innerContainer}>
 
           <h1>TP integrador: luminosidad para plantas de vid</h1>
-          <p>Limite de lux: {luxThreshold}</p>
-          <p>Luminosidad por minuto: {luxPerMinute}</p>
+          <p>Luminosidad minima objetivo: {luxThreshold} lux</p>
+          <p>Luminosidad por minuto: {luxPerMinute} lux</p>
           {firstButton}
           {response}
         </div>
