@@ -11,7 +11,7 @@ void loop() {
 }
 
 void calculate_accumulated_lux_in_minute() {
-  int accumulated_lux = 0;
+  long int accumulated_lux = 0;
   Serial.println("calculating lux per minute...");
   for (int i=0; i < 60; i++){
     accumulated_lux += analogRead(A3);
